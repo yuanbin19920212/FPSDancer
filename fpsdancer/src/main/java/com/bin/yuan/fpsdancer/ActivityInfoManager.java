@@ -7,7 +7,9 @@ import android.os.Bundle;
 import com.bin.yuan.fpsdancer.annotation.Developer;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by yuanbin on 2018/3/27.
@@ -17,9 +19,15 @@ public class ActivityInfoManager implements Application.ActivityLifecycleCallbac
 
     private HashMap<Class,ActivityInfo> mActivityInfoCaches = new HashMap<>();
 
+    private List<Activity> activities = new ArrayList<>();
 
     private ActivityInfo mCurrentActivityInfo;
 
+    private AppTerminateCallback appTerminateCallback;
+
+    public void setAppTerminateCallback(AppTerminateCallback appTerminateCallback) {
+        this.appTerminateCallback = appTerminateCallback;
+    }
 
     public ActivityInfo getCurrentActivityInfo() {
         return mCurrentActivityInfo;
@@ -43,7 +51,11 @@ public class ActivityInfoManager implements Application.ActivityLifecycleCallbac
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+        synchronized (ActivityInfoManager.class) {
+            if (!activities.contains(activity)) {
+                activities.add(activity);
+            }
+        }
     }
 
     @Override
@@ -89,5 +101,16 @@ public class ActivityInfoManager implements Application.ActivityLifecycleCallbac
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        synchronized (ActivityInfoManager.class) {
+            if (activities.contains(activity))
+            activities.remove(activity);
+        }
+        if (activities.size() <= 0){
+            if (appTerminateCallback != null)appTerminateCallback.terminate();
+        }
+    }
+
+    public interface AppTerminateCallback{
+        void terminate();
     }
 }

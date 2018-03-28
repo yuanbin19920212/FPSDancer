@@ -52,6 +52,15 @@ public class DancerBuilder {
         this.mStatistics = statistics;
         return this;
     }
+
+    /***
+     * 终止
+     */
+    public void terminate(){
+        if (mStatistics != null){
+            mStatistics.saveSamples();
+        }
+    }
     /***
      * build
      */
@@ -91,6 +100,12 @@ public class DancerBuilder {
     private void createStatisticsIfNeed(){
         if (mStatistics == null)return;
         mApplication.registerActivityLifecycleCallbacks(mActivityInfoManager = new ActivityInfoManager());
+        mActivityInfoManager.setAppTerminateCallback(new ActivityInfoManager.AppTerminateCallback() {
+            @Override
+            public void terminate() {
+                mStatistics.saveSamples();
+            }
+        });
     }
 
     /***

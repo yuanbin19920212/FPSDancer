@@ -10,4 +10,6 @@ import com.bin.yuan.fpsdancer.Calculation;
 public interface IStatistics {
 
     void collectData(ActivityInfo activityInfo, Calculation.Metric metric, Long fsp);
+
+    void saveSamples();
 }

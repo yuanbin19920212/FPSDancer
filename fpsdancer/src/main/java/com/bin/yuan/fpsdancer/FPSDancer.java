@@ -7,7 +7,26 @@ import android.app.Application;
  */
 
 public class FPSDancer {
-    public static DancerBuilder create(Application application){
-        return new DancerBuilder(application);
+
+    private static DancerBuilder dancerBuilder;
+
+    public static DancerBuilder create(Application application) {
+        if (dancerBuilder == null) {
+            dancerBuilder = new DancerBuilder(application);
+        }
+        return dancerBuilder;
+    }
+
+    public static DancerBuilder getInstance() {
+        if (dancerBuilder == null){
+            throw new NullPointerException("You should first create dancerBuilder");
+        }
+        return dancerBuilder;
+    }
+
+    public static void terminateFPSDancer() {
+        if (dancerBuilder != null) {
+            dancerBuilder.terminate();
+        }
     }
 }
