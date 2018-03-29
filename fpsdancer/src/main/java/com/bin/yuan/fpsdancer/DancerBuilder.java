@@ -54,6 +54,29 @@ public class DancerBuilder {
     }
 
     /***
+     * 设置保存路径
+     * @param str
+     * @return
+     */
+    public DancerBuilder setSavePath(String str){
+        if (mStatistics != null){
+            mStatistics.setSavePath(str);
+        }
+        return this;
+    }
+
+    /***
+     * 设置sample size
+     * @param size
+     * @return
+     */
+    public DancerBuilder setSampleSize(int size){
+        if (mStatistics != null){
+            mStatistics.setSimpleSize(size);
+        }
+        return this;
+    }
+    /***
      * 终止
      */
     public void terminate(){

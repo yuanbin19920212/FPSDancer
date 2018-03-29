@@ -12,6 +12,8 @@ class FpsApplication : Application() {
         super.onCreate()
         FPSDancer.create(this)
                 .setStatistics(FPSStatistics())
+                .setSampleSize(5)
+                .setSavePath("fpsdancer")
                 .build()
     }
 }

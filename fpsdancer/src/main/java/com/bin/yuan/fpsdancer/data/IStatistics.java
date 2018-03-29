@@ -12,4 +12,8 @@ public interface IStatistics {
     void collectData(ActivityInfo activityInfo, Calculation.Metric metric, Long fsp);
 
     void saveSamples();
+
+    void setSimpleSize(int simpleSize);
+
+    void setSavePath(String savePath);
 }

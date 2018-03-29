@@ -23,7 +23,18 @@ public class FPSStatistics implements IStatistics {
 
     private List<JsonObject> samples = new ArrayList<>();
 
-    private int simpleSize = 1000;
+    private int simpleSize = 18;
+
+    private String savePath = "fps";
+
+
+    public void setSimpleSize(int simpleSize) {
+        this.simpleSize = simpleSize;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
+    }
 
     /***
      *
@@ -48,11 +59,12 @@ public class FPSStatistics implements IStatistics {
     @Override
     public void saveSamples() {
         final String sampleStr = gson.toJson(samples);
+        final int size = samples.size();
         samples.clear();
         PoolExecutors.call(new Runnable() {
             @Override
             public void run() {
-                FileUtil.saveFpsTxt(sampleStr,"fps/dd");
+                FileUtil.saveFpsTxt(sampleStr,size,savePath);
             }
         });
     }
