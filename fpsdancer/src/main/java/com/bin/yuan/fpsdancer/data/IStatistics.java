@@ -16,4 +16,6 @@ public interface IStatistics {
     void setSimpleSize(int simpleSize);
 
     void setSavePath(String savePath);
+
+    void setAddition(Addition addition);
 }

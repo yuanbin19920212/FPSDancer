@@ -2,6 +2,7 @@ package com.bin.yuan.fpsdancer;
 
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -160,7 +161,7 @@ public class FileUtil {
     }
 
     /**
-      * 以行为单位读取文件，常用于读面向行的格式化文件
+      * 以行为单位读取文件
      */
     public static String readFileByLines(File file) {
         BufferedReader reader = null;

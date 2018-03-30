@@ -19,5 +19,7 @@ public interface ICoach {
 
      void show();
 
-     void hide ();
+     void hide (boolean remove);
+
+     void setAdapter(CoachAdapter coachAdapter);
 }

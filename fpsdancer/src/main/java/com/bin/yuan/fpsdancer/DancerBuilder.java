@@ -3,10 +3,18 @@ package com.bin.yuan.fpsdancer;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.ComponentCallbacks2;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.Choreographer;
 
+import com.bin.yuan.fpsdancer.data.Addition;
 import com.bin.yuan.fpsdancer.data.IStatistics;
+import com.bin.yuan.fpsdancer.ui.CoachAdapter;
+import com.bin.yuan.fpsdancer.ui.CoachWindow;
 import com.bin.yuan.fpsdancer.ui.ICoach;
 
 import java.util.AbstractMap;
@@ -32,6 +40,8 @@ public class DancerBuilder {
 
     private ActivityInfoManager mActivityInfoManager;
 
+    private Addition mAddition;
+
     protected DancerBuilder(Application application){
         this.mApplication = application;
         mFpsConfig = new FPSConfig();
@@ -42,8 +52,10 @@ public class DancerBuilder {
      * @param coach
      * @return
      */
-    public DancerBuilder setCoach(ICoach coach){
-        this.mCoach = coach;
+    public DancerBuilder setCoach(boolean coach){
+        if (coach) {
+            this.mCoach = new CoachWindow(mFpsConfig);
+        }
         return this;
     }
 
@@ -66,6 +78,20 @@ public class DancerBuilder {
     }
 
     /***
+     * 设置adapter
+     * @param coachAdapter
+     * @return
+     */
+    public DancerBuilder setCoachAdapter(CoachAdapter coachAdapter){
+        if (coachAdapter == null || mCoach == null)return this;
+        if (overlayPermRequest(mApplication)) {
+            //once permission is granted then you must call show() again
+            return this;
+        }
+        mCoach.setAdapter(coachAdapter);
+        return this;
+    }
+    /***
      * 设置sample size
      * @param size
      * @return
@@ -73,6 +99,14 @@ public class DancerBuilder {
     public DancerBuilder setSampleSize(int size){
         if (mStatistics != null){
             mStatistics.setSimpleSize(size);
+        }
+        return this;
+    }
+
+    public DancerBuilder setSampleSize(Addition addition){
+        if (mStatistics != null){
+            mAddition = addition;
+            mStatistics.setAddition(addition);
         }
         return this;
     }
@@ -148,8 +182,29 @@ public class DancerBuilder {
             @Override
             public void onBecameBackground() {
                 if (mCoach != null)
-                mCoach.hide();
+                mCoach.hide(false);
             }
         });
+    }
+
+    /**
+     * request overlay permission when api >= 23
+     * @param context
+     * @return
+     */
+    private boolean overlayPermRequest(Context context) {
+        boolean permNeeded = false;
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (!Settings.canDrawOverlays(context))
+            {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + context.getPackageName()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                permNeeded = true;
+            }
+        }
+        return permNeeded;
     }
 }

@@ -1,5 +1,6 @@
 package com.bin.yuan.fpsdancer.data;
 
+import android.os.Build;
 import android.util.Log;
 
 import com.bin.yuan.fpsdancer.ActivityInfo;
@@ -11,7 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yuanbin on 2018/3/27.
@@ -23,10 +26,11 @@ public class FPSStatistics implements IStatistics {
 
     private List<JsonObject> samples = new ArrayList<>();
 
-    private int simpleSize = 18;
+    private int simpleSize = 1000;
 
     private String savePath = "fps";
 
+    private Addition addition;
 
     public void setSimpleSize(int simpleSize) {
         this.simpleSize = simpleSize;
@@ -34,6 +38,10 @@ public class FPSStatistics implements IStatistics {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
+    }
+
+    public void setAddition(Addition addition) {
+        this.addition = addition;
     }
 
     /***
@@ -95,11 +103,22 @@ public class FPSStatistics implements IStatistics {
             jsonObject.addProperty("departmentName",activityInfo.getDepartmentName());
             jsonObject.addProperty("description",activityInfo.getDescription());
         }
-
-        jsonObject.addProperty("metric",metric.name());
-        jsonObject.addProperty("fsp",fsp);
-        jsonObject.addProperty("time",System.currentTimeMillis());
-
+        if (addition != null){
+            JsonObject extra = new JsonObject();
+            addition.add(extra);
+            for (Iterator<Map.Entry<String, JsonElement>> it = extra.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<String, JsonElement> entry = it.next();
+                jsonObject.add(entry.getKey(),entry.getValue());
+            }
+        }else {
+            jsonObject.addProperty("metric", metric.name());
+            jsonObject.addProperty("fsp", fsp);
+            jsonObject.addProperty("time", System.currentTimeMillis());
+            jsonObject.addProperty("board", Build.BOARD);
+            jsonObject.addProperty("manufacturer", Build.MANUFACTURER);
+            jsonObject.addProperty("model", Build.MODEL);
+            jsonObject.addProperty("sdk_int", Build.VERSION.SDK_INT);
+        }
         return jsonObject;
     }
 }
